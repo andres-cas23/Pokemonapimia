@@ -1,7 +1,9 @@
-const express = require("express");
-const cors    = require("cors");
-const Database = require("better-sqlite3");
-const path    = require("path");
+const express    = require("express");
+const cors       = require("cors");
+const Database   = require("better-sqlite3");
+const path       = require("path");
+const swaggerUi  = require("swagger-ui-express");
+const swaggerJsdoc = require("swagger-jsdoc");
 
 // ─── Setup ────────────────────────────────────────────────────────────────────
 const app  = express();
@@ -9,6 +11,56 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
+
+// ─── Swagger ──────────────────────────────────────────────────────────────────
+const swaggerOptions = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "Pokémon DB API",
+      version: "2.0.0",
+      description: "API REST para gestionar una base de datos de Pokémon"
+    },
+    servers: [{ url: `http://localhost:${PORT}` }],
+    components: {
+      schemas: {
+        Pokemon: {
+          type: "object",
+          properties: {
+            id:               { type: "integer",  example: 6  },
+            nombre:           { type: "string",   example: "Charizard" },
+            imagen_frontal:   { type: "string",   example: "https://..." },
+            imagen_posterior: { type: "string",   example: "https://..." },
+            imagen_shiny:     { type: "string",   example: "https://..." },
+            altura:           { type: "number",   example: 1.7 },
+            peso:             { type: "number",   example: 90.5 },
+            tipo1:            { type: "string",   example: "Fuego" },
+            tipo2:            { type: "string",   example: "Volador", nullable: true }
+          }
+        },
+        PokemonInput: {
+          type: "object",
+          required: ["id","nombre","imagen_frontal","imagen_posterior","imagen_shiny","altura","peso","tipo1"],
+          properties: {
+            id:               { type: "integer" },
+            nombre:           { type: "string"  },
+            imagen_frontal:   { type: "string"  },
+            imagen_posterior: { type: "string"  },
+            imagen_shiny:     { type: "string"  },
+            altura:           { type: "number"  },
+            peso:             { type: "number"  },
+            tipo1:            { type: "string"  },
+            tipo2:            { type: "string", nullable: true }
+          }
+        }
+      }
+    }
+  },
+  apis: ["./server.js"]
+};
+
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // ─── Database ─────────────────────────────────────────────────────────────────
 const DB_PATH = process.env.DB_PATH || path.join(__dirname, "pokemon.db");
@@ -44,113 +96,113 @@ function seedDatabase() {
 
   const pokemons = [
     {
-      id: 1,
-      nombre:           "Bulbasaur",
-      imagen_frontal:   img(1),
-      imagen_posterior: back(1),
-      imagen_shiny:     shiny(1),
-      altura:           0.7,
-      peso:             6.9,
-      tipo1:            "Planta",
-      tipo2:            "Veneno"
+      id: 6,
+      nombre:           "Charizard",
+      imagen_frontal:   img(6),
+      imagen_posterior: back(6),
+      imagen_shiny:     shiny(6),
+      altura:           1.7,
+      peso:             90.5,
+      tipo1:            "Fuego",
+      tipo2:            "Volador"
     },
     {
-      id: 4,
-      nombre:           "Charmander",
-      imagen_frontal:   img(4),
-      imagen_posterior: back(4),
-      imagen_shiny:     shiny(4),
-      altura:           0.6,
-      peso:             8.5,
+      id: 9,
+      nombre:           "Blastoise",
+      imagen_frontal:   img(9),
+      imagen_posterior: back(9),
+      imagen_shiny:     shiny(9),
+      altura:           1.6,
+      peso:             85.5,
+      tipo1:            "Agua",
+      tipo2:            null
+    },
+    {
+      id: 31,
+      nombre:           "Nidoqueen",
+      imagen_frontal:   img(31),
+      imagen_posterior: back(31),
+      imagen_shiny:     shiny(31),
+      altura:           1.3,
+      peso:             60.0,
+      tipo1:            "Veneno",
+      tipo2:            "Tierra"
+    },
+    {
+      id: 59,
+      nombre:           "Arcanine",
+      imagen_frontal:   img(59),
+      imagen_posterior: back(59),
+      imagen_shiny:     shiny(59),
+      altura:           1.9,
+      peso:             155.0,
       tipo1:            "Fuego",
       tipo2:            null
     },
     {
-      id: 7,
-      nombre:           "Squirtle",
-      imagen_frontal:   img(7),
-      imagen_posterior: back(7),
-      imagen_shiny:     shiny(7),
-      altura:           0.5,
-      peso:             9.0,
-      tipo1:            "Agua",
+      id: 65,
+      nombre:           "Alakazam",
+      imagen_frontal:   img(65),
+      imagen_posterior: back(65),
+      imagen_shiny:     shiny(65),
+      altura:           1.5,
+      peso:             48.0,
+      tipo1:            "Psíquico",
       tipo2:            null
     },
     {
-      id: 25,
-      nombre:           "Pikachu",
-      imagen_frontal:   img(25),
-      imagen_posterior: back(25),
-      imagen_shiny:     shiny(25),
-      altura:           0.4,
-      peso:             6.0,
+      id: 76,
+      nombre:           "Golem",
+      imagen_frontal:   img(76),
+      imagen_posterior: back(76),
+      imagen_shiny:     shiny(76),
+      altura:           1.4,
+      peso:             300.0,
+      tipo1:            "Roca",
+      tipo2:            "Tierra"
+    },
+    {
+      id: 130,
+      nombre:           "Gyarados",
+      imagen_frontal:   img(130),
+      imagen_posterior: back(130),
+      imagen_shiny:     shiny(130),
+      altura:           6.5,
+      peso:             235.0,
+      tipo1:            "Agua",
+      tipo2:            "Volador"
+    },
+    {
+      id: 135,
+      nombre:           "Jolteon",
+      imagen_frontal:   img(135),
+      imagen_posterior: back(135),
+      imagen_shiny:     shiny(135),
+      altura:           0.8,
+      peso:             24.5,
       tipo1:            "Eléctrico",
       tipo2:            null
     },
     {
-      id: 39,
-      nombre:           "Jigglypuff",
-      imagen_frontal:   img(39),
-      imagen_posterior: back(39),
-      imagen_shiny:     shiny(39),
-      altura:           0.5,
-      peso:             5.5,
-      tipo1:            "Normal",
-      tipo2:            "Hada"
+      id: 149,
+      nombre:           "Dragonite",
+      imagen_frontal:   img(149),
+      imagen_posterior: back(149),
+      imagen_shiny:     shiny(149),
+      altura:           2.2,
+      peso:             210.0,
+      tipo1:            "Dragón",
+      tipo2:            "Volador"
     },
     {
-      id: 52,
-      nombre:           "Meowth",
-      imagen_frontal:   img(52),
-      imagen_posterior: back(52),
-      imagen_shiny:     shiny(52),
-      altura:           0.4,
-      peso:             4.2,
-      tipo1:            "Normal",
-      tipo2:            null
-    },
-    {
-      id: 94,
-      nombre:           "Gengar",
-      imagen_frontal:   img(94),
-      imagen_posterior: back(94),
-      imagen_shiny:     shiny(94),
-      altura:           1.5,
-      peso:             40.5,
-      tipo1:            "Fantasma",
-      tipo2:            "Veneno"
-    },
-    {
-      id: 131,
-      nombre:           "Lapras",
-      imagen_frontal:   img(131),
-      imagen_posterior: back(131),
-      imagen_shiny:     shiny(131),
-      altura:           2.5,
-      peso:             220.0,
-      tipo1:            "Agua",
-      tipo2:            "Hielo"
-    },
-    {
-      id: 133,
-      nombre:           "Eevee",
-      imagen_frontal:   img(133),
-      imagen_posterior: back(133),
-      imagen_shiny:     shiny(133),
-      altura:           0.3,
-      peso:             6.5,
-      tipo1:            "Normal",
-      tipo2:            null
-    },
-    {
-      id: 143,
-      nombre:           "Snorlax",
-      imagen_frontal:   img(143),
-      imagen_posterior: back(143),
-      imagen_shiny:     shiny(143),
-      altura:           2.1,
-      peso:             460.0,
-      tipo1:            "Normal",
+      id: 150,
+      nombre:           "Mewtwo",
+      imagen_frontal:   img(150),
+      imagen_posterior: back(150),
+      imagen_shiny:     shiny(150),
+      altura:           2.0,
+      peso:             122.0,
+      tipo1:            "Psíquico",
       tipo2:            null
     },
   ];
@@ -174,11 +226,20 @@ seedDatabase();
 
 // ─── RUTAS ────────────────────────────────────────────────────────────────────
 
-// GET /
+/**
+ * @swagger
+ * /:
+ *   get:
+ *     summary: Info general de la API
+ *     responses:
+ *       200:
+ *         description: Información de la API y lista de endpoints
+ */
 app.get("/", (_, res) => {
   res.json({
     api: "Pokémon DB API",
     version: "2.0.0",
+    docs: `http://localhost:${PORT}/api-docs`,
     total_pokemon: db.prepare("SELECT COUNT(*) as n FROM pokemon").get().n,
     endpoints: {
       "GET /pokemon":                  "Lista todos los Pokémon",
@@ -192,13 +253,53 @@ app.get("/", (_, res) => {
   });
 });
 
-// GET /pokemon
+/**
+ * @swagger
+ * /pokemon:
+ *   get:
+ *     summary: Lista todos los Pokémon
+ *     responses:
+ *       200:
+ *         description: Array con todos los Pokémon
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 total:
+ *                   type: integer
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Pokemon'
+ */
 app.get("/pokemon", (_, res) => {
   const rows = db.prepare("SELECT * FROM pokemon ORDER BY id").all();
   res.json({ total: rows.length, data: rows });
 });
 
-// GET /pokemon/nombre/:nombre  — debe ir ANTES de /:id
+/**
+ * @swagger
+ * /pokemon/nombre/{nombre}:
+ *   get:
+ *     summary: Busca un Pokémon por nombre
+ *     parameters:
+ *       - in: path
+ *         name: nombre
+ *         required: true
+ *         schema:
+ *           type: string
+ *         example: Charizard
+ *     responses:
+ *       200:
+ *         description: Pokémon encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Pokemon'
+ *       404:
+ *         description: Pokémon no encontrado
+ */
 app.get("/pokemon/nombre/:nombre", (req, res) => {
   const row = db.prepare(
     "SELECT * FROM pokemon WHERE LOWER(nombre) = LOWER(?)"
@@ -207,7 +308,24 @@ app.get("/pokemon/nombre/:nombre", (req, res) => {
   res.json(row);
 });
 
-// GET /pokemon/tipo/:tipo
+/**
+ * @swagger
+ * /pokemon/tipo/{tipo}:
+ *   get:
+ *     summary: Filtra Pokémon por tipo
+ *     parameters:
+ *       - in: path
+ *         name: tipo
+ *         required: true
+ *         schema:
+ *           type: string
+ *         example: Fuego
+ *     responses:
+ *       200:
+ *         description: Lista de Pokémon del tipo solicitado
+ *       404:
+ *         description: No hay Pokémon de ese tipo
+ */
 app.get("/pokemon/tipo/:tipo", (req, res) => {
   const tipo = req.params.tipo;
   const rows = db.prepare(
@@ -217,7 +335,30 @@ app.get("/pokemon/tipo/:tipo", (req, res) => {
   res.json({ tipo, total: rows.length, data: rows });
 });
 
-// GET /pokemon/:id
+/**
+ * @swagger
+ * /pokemon/{id}:
+ *   get:
+ *     summary: Busca un Pokémon por ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         example: 6
+ *     responses:
+ *       200:
+ *         description: Pokémon encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Pokemon'
+ *       400:
+ *         description: ID inválido
+ *       404:
+ *         description: Pokémon no encontrado
+ */
 app.get("/pokemon/:id", (req, res) => {
   const id = parseInt(req.params.id);
   if (isNaN(id)) return res.status(400).json({ error: "ID debe ser un número" });
@@ -226,7 +367,25 @@ app.get("/pokemon/:id", (req, res) => {
   res.json(row);
 });
 
-// POST /pokemon
+/**
+ * @swagger
+ * /pokemon:
+ *   post:
+ *     summary: Crea un nuevo Pokémon
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/PokemonInput'
+ *     responses:
+ *       201:
+ *         description: Pokémon creado exitosamente
+ *       400:
+ *         description: Campos requeridos faltantes
+ *       409:
+ *         description: Ya existe un Pokémon con ese ID o nombre
+ */
 app.post("/pokemon", (req, res) => {
   const { id, nombre, imagen_frontal, imagen_posterior, imagen_shiny, altura, peso, tipo1, tipo2 } = req.body;
   const requeridos = { id, nombre, imagen_frontal, imagen_posterior, imagen_shiny, altura, peso, tipo1 };
@@ -249,7 +408,31 @@ app.post("/pokemon", (req, res) => {
   }
 });
 
-// PUT /pokemon/:id
+/**
+ * @swagger
+ * /pokemon/{id}:
+ *   put:
+ *     summary: Actualiza un Pokémon existente
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/PokemonInput'
+ *     responses:
+ *       200:
+ *         description: Pokémon actualizado
+ *       400:
+ *         description: ID inválido
+ *       404:
+ *         description: Pokémon no encontrado
+ */
 app.put("/pokemon/:id", (req, res) => {
   const id = parseInt(req.params.id);
   if (isNaN(id)) return res.status(400).json({ error: "ID inválido" });
@@ -276,7 +459,26 @@ app.put("/pokemon/:id", (req, res) => {
   });
 });
 
-// DELETE /pokemon/:id
+/**
+ * @swagger
+ * /pokemon/{id}:
+ *   delete:
+ *     summary: Elimina un Pokémon
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         example: 6
+ *     responses:
+ *       200:
+ *         description: Pokémon eliminado correctamente
+ *       400:
+ *         description: ID inválido
+ *       404:
+ *         description: Pokémon no encontrado
+ */
 app.delete("/pokemon/:id", (req, res) => {
   const id = parseInt(req.params.id);
   if (isNaN(id)) return res.status(400).json({ error: "ID inválido" });
@@ -291,6 +493,7 @@ app.use((_, res) => res.status(404).json({ error: "Ruta no encontrada" }));
 // ─── Start ────────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
   console.log(`🚀 Pokémon API corriendo en puerto ${PORT}`);
+  console.log(`📄 Swagger UI: http://localhost:${PORT}/api-docs`);
 });
 
 module.exports = app;
