@@ -13,6 +13,10 @@ app.use(cors());
 app.use(express.json());
 
 // ─── Swagger ──────────────────────────────────────────────────────────────────
+const RAILWAY_URL = process.env.RAILWAY_PUBLIC_DOMAIN
+  ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`
+  : `http://localhost:${PORT}`;
+
 const swaggerOptions = {
   definition: {
     openapi: "3.0.0",
@@ -21,7 +25,7 @@ const swaggerOptions = {
       version: "2.0.0",
       description: "API REST para gestionar una base de datos de Pokémon"
     },
-    servers: [{ url: `http://localhost:${PORT}` }],
+    servers: [{ url: RAILWAY_URL }],
     components: {
       schemas: {
         Pokemon: {
